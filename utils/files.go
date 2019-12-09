@@ -31,7 +31,7 @@ func ReadLinesOfNumbers(filename string) []int {
 
 	var numbers []int
 	for scanner.Scan() {
-		numbers = append(numbers, toInt(scanner.Text()))
+		numbers = append(numbers, ToInt(scanner.Text()))
 	}
 	return numbers
 }
@@ -47,13 +47,13 @@ func ReadCSVNumbers(filename string) []int {
 	var numbers []int
 
 	for _, number := range row {
-		numbers = append(numbers, toInt(number))
+		numbers = append(numbers, ToInt(number))
 	}
 
 	return numbers
 }
 
-func toInt(s string) int {
+func ToInt(s string) int {
 	result, err := strconv.Atoi(s)
 	check(err)
 	return result
