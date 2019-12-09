@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	modules := utils.ReadNumbers("./day01/input.txt")
+	modules := utils.ReadLinesOfNumbers("./day01/input.txt")
 
 	baseFuel := 0
 	totalFuel := 0
