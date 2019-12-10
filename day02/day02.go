@@ -1,6 +1,7 @@
 package main
 
 import (
+	"advent-2019/intcode"
 	"advent-2019/utils"
 	"fmt"
 )
@@ -23,26 +24,9 @@ func main() {
 }
 
 func emulate (program []int, noun int, verb int) (result int) {
-	memory := make([]int, len(program))
-	copy(memory, program)
+	computer := intcode.CreateIntcodeComputer(program)
+	computer.ChangeNounAndVerb(noun, verb)
+	computer.Run()
 
-	memory[1], memory[2] = noun, verb
-
-	for pos := 0 ; ; {
-		opcode := memory[pos]
-		switch opcode {
-		case 1: // Addition
-			op1Pos, op2Pos, resPos := memory[pos + 1], memory[pos + 2], memory[pos + 3]
-			memory[resPos] = memory[op1Pos] + memory[op2Pos]
-
-			pos += 4
-		case 2: // Multiplication
-			op1Pos, op2Pos, resPos := memory[pos + 1], memory[pos + 2], memory[pos + 3]
-			memory[resPos] = memory[op1Pos] * memory[op2Pos]
-
-			pos += 4
-		case 99:
-			return memory[0]
-		}
-	}
+	return computer.Read(0)
 }
