@@ -12,8 +12,12 @@ func main() {
 	fmt.Println("----- Part 1 -----")
 	computer := intcode.CreateIntcodeComputer(program...)
 	outputs := computer.Run(1)
-
 	diagnosticCode := outputs[len(outputs)-1]
+	fmt.Printf("Diagnostic code: %d\n", diagnosticCode)
 
+	fmt.Println("----- Part 2 -----")
+	computer.Load(program...)
+	outputs = computer.Run(5)
+	diagnosticCode = outputs[len(outputs)-1]
 	fmt.Printf("Diagnostic code: %d\n", diagnosticCode)
 }

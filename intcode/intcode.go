@@ -45,9 +45,44 @@ func (i *Intcode) Run(inputs ...int) []int {
 			i.set(i.memory[pos+1], nextInput)
 			pos += 2
 		case 4: // Output
-			outputs = append(outputs, i.get(i.memory[pos+1], false))
+			outputs = append(outputs, i.get(i.memory[pos+1], parameterModes & 1 != 0))
 			pos += 2
+		case 5: // Jump If True
+			operand1 := i.get(i.memory[pos+1], parameterModes & 1 != 0)
+			operand2 := i.get(i.memory[pos+2], parameterModes & 2 != 0)
 
+			if operand1 != 0 {
+				pos = operand2
+			} else {
+				pos += 3
+			}
+		case 6: // Jump If False
+			operand1 := i.get(i.memory[pos+1], parameterModes & 1 != 0)
+			operand2 := i.get(i.memory[pos+2], parameterModes & 2 != 0)
+
+			if operand1 == 0 {
+				pos = operand2
+			} else {
+				pos += 3
+			}
+		case 7: // Less Than
+			operand1 := i.get(i.memory[pos+1], parameterModes & 1 != 0)
+			operand2 := i.get(i.memory[pos+2], parameterModes & 2 != 0)
+			if operand1 < operand2 {
+				i.set(i.memory[pos+3], 1)
+			} else {
+				i.set(i.memory[pos+3], 0)
+			}
+			pos += 4
+		case 8: // Equals
+			operand1 := i.get(i.memory[pos+1], parameterModes & 1 != 0)
+			operand2 := i.get(i.memory[pos+2], parameterModes & 2 != 0)
+			if operand1 == operand2 {
+				i.set(i.memory[pos+3], 1)
+			} else {
+				i.set(i.memory[pos+3], 0)
+			}
+			pos += 4
 		case 99:
 			break loop
 		}
