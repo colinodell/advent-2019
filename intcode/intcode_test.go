@@ -42,7 +42,7 @@ func TestComputerWithInputAndOutput(t *testing.T) {
 func TestComputerWithAsyncInputAndOutput(t *testing.T) {
 	i := CreateIntcodeComputer(3,0,4,0,99)
 	input := make(chan int)
-	output := i.RunAsync(input)
+	output := i.RunAsync(input, nil)
 
 	input <- 42
 

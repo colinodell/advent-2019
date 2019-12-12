@@ -44,14 +44,14 @@ func (i *Intcode) Run(inputs ...int) []int {
 	var outputs []int
 
 	// Run the program and read outputs into our slice
-	for outputValue := range i.RunAsync(inputChannel) {
+	for outputValue := range i.RunAsync(inputChannel, nil) {
 		outputs = append(outputs, outputValue)
 	}
 
 	return outputs
 }
 
-func (i *Intcode) RunAsync(input chan int) chan int {
+func (i *Intcode) RunAsync(input chan int, done func()) chan int {
 	i.pos = 0
 	i.memory = make([]int, len(i.program))
 	copy(i.memory, i.program)
@@ -65,12 +65,20 @@ func (i *Intcode) RunAsync(input chan int) chan int {
 
 			if err != nil {
 				close(i.output)
+				if done != nil {
+					done()
+				}
 				return
 			}
 		}
 	}()
 
 	return i.output
+}
+
+func (i *Intcode) SetOutput(output chan int) {
+	close(i.output)
+	i.output = output
 }
 
 func (i *Intcode) executeNextOperation() error {
