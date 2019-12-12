@@ -24,7 +24,7 @@ func main() {
 }
 
 func emulate (program []int, noun int, verb int) (result int) {
-	computer := intcode.CreateIntcodeComputer(program)
+	computer := intcode.CreateIntcodeComputer(program...)
 	computer.ChangeNounAndVerb(noun, verb)
 	computer.Run()
 
