@@ -39,6 +39,16 @@ func TestComputerWithInputAndOutput(t *testing.T) {
 	assert.Equal(t, 42, output[0])
 }
 
+func TestComputerWithAsyncInputAndOutput(t *testing.T) {
+	i := CreateIntcodeComputer(3,0,4,0,99)
+	input := make(chan int)
+	output := i.RunAsync(input)
+
+	input <- 42
+
+	assert.Equal(t, 42, <- output)
+}
+
 func TestComputerWithNegativeIntegers(t *testing.T) {
 	i := CreateIntcodeComputer(1101,100,-1,4,0)
 	i.Run()
@@ -53,7 +63,6 @@ func TestEqualsUsingPositionMode(t *testing.T) {
 	outputs := i.Run(8)
 	assert.Equal(t, 1, outputs[0])
 
-	i.Load(program...)
 	outputs = i.Run(7)
 	assert.Equal(t, 0, outputs[0])
 }
@@ -65,7 +74,6 @@ func TestLessThanUsingPositionMode(t *testing.T) {
 	outputs := i.Run(8)
 	assert.Equal(t, 0, outputs[0])
 
-	i.Load(program...)
 	outputs = i.Run(7)
 	assert.Equal(t, 1, outputs[0])
 }
@@ -77,7 +85,6 @@ func TestEqualsUsingImmediateMode(t *testing.T) {
 	outputs := i.Run(8)
 	assert.Equal(t, 1, outputs[0])
 
-	i.Load(program...)
 	outputs = i.Run(7)
 	assert.Equal(t, 0, outputs[0])
 }
@@ -89,7 +96,6 @@ func TestLessThanUsingImmediateMode(t *testing.T) {
 	outputs := i.Run(8)
 	assert.Equal(t, 0, outputs[0])
 
-	i.Load(program...)
 	outputs = i.Run(7)
 	assert.Equal(t, 1, outputs[0])
 }
@@ -101,7 +107,6 @@ func TestJumpingUsingPositionMode(t *testing.T) {
 	outputs := i.Run(0)
 	assert.Equal(t, 0, outputs[0])
 
-	i.Load(program...)
 	outputs = i.Run(42)
 	assert.Equal(t, 1, outputs[0])
 }
@@ -113,7 +118,6 @@ func TestJumpingUsingImmediateMode(t *testing.T) {
 	outputs := i.Run(0)
 	assert.Equal(t, 0, outputs[0])
 
-	i.Load(program...)
 	outputs = i.Run(42)
 	assert.Equal(t, 1, outputs[0])
 }
@@ -128,11 +132,9 @@ func TestJumpingWithAdvancedProgram(t *testing.T) {
 	outputs := i.Run(7)
 	assert.Equal(t, 999, outputs[0])
 
-	i.Load(program...)
 	outputs = i.Run(8)
 	assert.Equal(t, 1000, outputs[0])
 
-	i.Load(program...)
 	outputs = i.Run(9)
 	assert.Equal(t, 1001, outputs[0])
 }
