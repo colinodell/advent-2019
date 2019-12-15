@@ -5,6 +5,16 @@ import (
 	"testing"
 )
 
+func TestParseOpcode(t *testing.T) {
+	opcode, paramModes := parseOpcode(2)
+	assert.Equal(t, 2, opcode)
+	assert.Equal(t, []int{0,0,0}, paramModes)
+
+	opcode, paramModes = parseOpcode(21005)
+	assert.Equal(t, 5, opcode)
+	assert.Equal(t, []int{0,1,2}, paramModes)
+}
+
 func TestComputerWithDay02Programs(t *testing.T) {
 	i := CreateIntcodeComputer(1,9,10,3,2,3,11,0,99,30,40,50)
 	i.Run()
@@ -137,4 +147,73 @@ func TestJumpingWithAdvancedProgram(t *testing.T) {
 
 	outputs = i.Run(9)
 	assert.Equal(t, 1001, outputs[0])
+}
+
+func TestRelativeBaseReadFunctionality(t *testing.T) {
+	// This program takes no input and produces a copy of itself
+	program1 := []int{109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99}
+	i := CreateIntcodeComputer(program1...)
+	outputs := i.Run()
+	assert.Equal(t, program1, outputs)
+
+	// This program outputs a 16-digit number
+	i.Load(1102,34915192,34915192,7,4,7,99,0)
+	outputs = i.Run()
+	assert.Equal(t, 16, countDigits(outputs[0]))
+
+	// This program will output the large number in the middle
+	i.Load(104,1125899906842624,99)
+	outputs = i.Run()
+	assert.Equal(t, 1125899906842624, outputs[0])
+
+	// Custom program to test relative mode opcode
+	i.Load(109, 2000, 109, 19, 109, -34, 99)
+	i.Run()
+	assert.Equal(t, 1985, i.relativeBase)
+}
+
+func TestRelativeBaseWriteFunctionality(t *testing.T) {
+	// Test programs from https://www.reddit.com/r/adventofcode/comments/e8aw9j/2019_day_9_part_1_how_to_fix_203_error/fac3294/
+	i := CreateIntcodeComputer()
+
+	i.Load(109, -1, 4, 1, 99)
+	outputs := i.Run()
+	assert.Equal(t, -1, outputs[0])
+
+	i.Load(109, -1, 104, 1, 99)
+	outputs = i.Run()
+	assert.Equal(t, 1, outputs[0])
+
+	i.Load(109, -1, 204, 1, 99)
+	outputs = i.Run()
+	assert.Equal(t, 109, outputs[0])
+
+	i.Load(109, 1, 9, 2, 204, -6, 99)
+	outputs = i.Run()
+	assert.Equal(t, 204, outputs[0])
+
+	i.Load(109, 1, 109, 9, 204, -6, 99)
+	outputs = i.Run()
+	assert.Equal(t, 204, outputs[0])
+
+	i.Load(109, 1, 209, -1, 204, -106, 99)
+	outputs = i.Run()
+	assert.Equal(t, 204, outputs[0])
+
+	i.Load(109, 1, 3, 3, 204, 2, 99)
+	outputs = i.Run(42)
+	assert.Equal(t, 42, outputs[0])
+
+	i.Load(109, 1, 203, 2, 204, 2, 99)
+	outputs = i.Run(42)
+	assert.Equal(t, 42, outputs[0])
+}
+
+func countDigits(i int) (count int) {
+	for i != 0 {
+
+		i /= 10
+		count = count + 1
+	}
+	return count
 }
