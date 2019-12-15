@@ -3,9 +3,17 @@ package utils
 import (
 	"bufio"
 	"encoding/csv"
+	"io/ioutil"
 	"os"
 	"strconv"
 )
+
+func ReadFile(filename string) string {
+	buf, err := ioutil.ReadFile(filename)
+	check(err)
+
+	return string(buf)
+}
 
 func ReadLines(filename string) []string {
 	file, err := os.Open(filename)
