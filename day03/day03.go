@@ -76,13 +76,6 @@ type Point struct {
 }
 
 func (p Point) ManhattanDistance() int {
-	return abs(p.X) + abs(p.Y)
+	return utils.Abs(p.X) + utils.Abs(p.Y)
 }
 
-func abs(i int) int {
-	if i < 0 {
-		return -i
-	}
-
-	return i
-}
