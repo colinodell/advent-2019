@@ -189,6 +189,10 @@ func (i *Intcode) set(location int, value int, mode int) {
 	}
 }
 
+func (i *Intcode) OverwriteProgram(location int, value int) {
+	i.program[location] = value
+}
+
 func parseOpcode(instruction int) (int, []int) {
 	opcode := instruction % 100
 

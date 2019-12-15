@@ -44,3 +44,13 @@ func LCM(a, b int, integers ...int) int {
 
 	return result
 }
+
+func Sign(i int) int {
+	if i < 0 {
+		return -1
+	} else if i > 0 {
+		return 1
+	} else {
+		return 0
+	}
+}
