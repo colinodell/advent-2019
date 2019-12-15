@@ -15,9 +15,7 @@ func main() {
 	maxOutputSignal := 0
 	for _, phaseSettings := range heappermutations.Ints([]int{0,1,2,3,4}) {
 		out := runAmplifierChain(program, phaseSettings...)
-		if out > maxOutputSignal {
-			maxOutputSignal = out
-		}
+		maxOutputSignal = utils.Max(out, maxOutputSignal)
 	}
 
 	fmt.Printf("Highest output signal: %d\n", maxOutputSignal)
@@ -26,9 +24,7 @@ func main() {
 	maxOutputSignal = 0
 	for _, phaseSettings := range heappermutations.Ints([]int{5,6,7,8,9}) {
 		out := runAmplifierChainWithFeedbackLoop(program, phaseSettings...)
-		if out > maxOutputSignal {
-			maxOutputSignal = out
-		}
+		maxOutputSignal = utils.Max(out, maxOutputSignal)
 	}
 
 	fmt.Printf("Highest output signal: %d\n", maxOutputSignal)

@@ -61,14 +61,8 @@ func Solve(wire1, wire2 string) (int, int) {
 			pos = moveOneUnit(pos, direction)
 			distance++
 			if grid[pos] > 0 {
-				manhattanDistance := pos.ManhattanDistance()
-				if manhattanDistance < closestIntersection {
-					closestIntersection = manhattanDistance
-				}
-				combinedDistance := distance + grid[pos]
-				if combinedDistance < shortestDistance {
-					shortestDistance = combinedDistance
-				}
+				closestIntersection = utils.Min(closestIntersection, pos.ManhattanDistance())
+				shortestDistance = utils.Min(shortestDistance, distance + grid[pos])
 			}
 		}
 	}
