@@ -30,7 +30,7 @@ func main() {
 type Screen map[utils.Vector2]int
 
 type ArcadeCabinet struct {
-	computer intcode.Intcode
+	computer *intcode.Intcode
 	screen Screen
 	ball, paddle utils.Vector2
 	score int

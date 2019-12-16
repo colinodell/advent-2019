@@ -43,7 +43,7 @@ func runAmplifierChain(program []int, phaseSettings ...int) int {
 }
 
 func runAmplifierChainWithFeedbackLoop(program []int, phaseSettings ...int) int {
-	computers := make([]intcode.Intcode, len(phaseSettings))
+	computers := make([]*intcode.Intcode, len(phaseSettings))
 	initialInput := make(chan int, 1)
 
 	var wg sync.WaitGroup

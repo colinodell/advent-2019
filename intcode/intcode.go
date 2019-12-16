@@ -24,11 +24,11 @@ type Intcode struct {
 	relativeBase int
 }
 
-func CreateIntcodeComputer(program ...int) Intcode {
+func CreateIntcodeComputer(program ...int) *Intcode {
 	i := Intcode{}
 	i.Load(program...)
 
-	return i
+	return &i
 }
 
 func (i *Intcode) Load(program ...int) {
