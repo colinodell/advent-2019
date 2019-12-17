@@ -11,26 +11,37 @@ func main() {
 	input := utils.ReadFile("./day16/input.txt")
 
 	fmt.Println("----- Part 1 -----")
-	fmt.Printf("The first 8 digits after 100 phases of FFT are: %s\n\n", RunFFT(input, 100)[:8])
+	fmt.Printf("The first 8 digits after 100 phases of FFT are: %s\n\n", ProcessSignal(input, 100, 1, 0, 8))
+}
+
+func ProcessSignal(signal string, phases, repeatSignal, messageOffset, messageLength int) string {
+	signal = strings.Repeat(signal, repeatSignal)
+
+	processed := RunFFT(signal, phases)
+
+	return processed[messageOffset:messageLength]
 }
 
 func RunFFT(signal string, phases int) string {
 	signalSize := len(signal)
+	resultDigits := make([]int, signalSize)
 
 	for p := 0; p < phases; p++ {
-		var resultDigits []int
-
 		for i := 0; i < signalSize; i++ {
-			pattern := generatePattern(signalSize, i + 1)
-
 			sum := 0
-			for j := 0; j < signalSize; j++ {
-				// Quick and dirty ASCII math
-				d := int(signal[j]) - 48
-				sum += (d * pattern[j]) % 10
+			for j := i; j < signalSize; j++ {
+				switch getMultiplier(i+1, j+1) {
+				case 0:
+					continue
+				case 1:
+					// Quick and dirty ASCII math
+					sum += (int(signal[j]) - 48) % 10
+				case -1:
+					sum -= (int(signal[j]) - 48) % 10
+				}
 			}
 
-			resultDigits = append(resultDigits, utils.Abs(sum % 10))
+			resultDigits[i] = utils.Abs(sum % 10)
 		}
 
 		signal = intSliceToString(resultDigits)
@@ -39,23 +50,15 @@ func RunFFT(signal string, phases int) string {
 	return signal
 }
 
-func generatePattern(size, position int) []int {
-	basePattern := []int{0, 1, 0, -1}
-	var result []int
-
-	loop:
-		for {
-			for _, p := range basePattern {
-				for j := 0; j < position; j++ {
-					result = append(result, p)
-					if len(result) > size {
-						break loop
-					}
-				}
-			}
-		}
-
-	return result[1:]
+func getMultiplier(i, j int) int {
+	switch (j / i) % 4 {
+	case 0, 2:
+		return 0
+	case 1:
+		return 1
+	default:
+		return -1
+	}
 }
 
 func intSliceToString(slice []int) string {
