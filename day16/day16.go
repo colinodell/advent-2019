@@ -12,18 +12,51 @@ func main() {
 
 	fmt.Println("----- Part 1 -----")
 	fmt.Printf("The first 8 digits after 100 phases of FFT are: %s\n\n", ProcessSignal(input, 100, 1, 0, 8))
+
+	messageOffset, _ := strconv.Atoi(input[:7])
+
+	fmt.Println("----- Part 2 -----")
+	fmt.Printf("The eight-digit message in the real signal is: %s\n\n", ProcessSignal(input, 100, 10000, messageOffset, 8))
 }
 
 func ProcessSignal(signal string, phases, repeatSignal, messageOffset, messageLength int) string {
 	signal = strings.Repeat(signal, repeatSignal)
 
-	processed := RunFFT(signal, phases)
+	signalSize := len(signal)
 
-	return processed[messageOffset:messageLength]
+	if messageOffset > (signalSize / 2) {
+		return RunFastFFT(signal, phases, messageOffset)[:messageLength]
+	} else {
+		return RunFFT(signal, phases)[messageOffset:messageLength]
+	}
+}
+
+func extractSignal(signal []int, from, to int) []int {
+	result := make([]int, to-from)
+	for i := range result {
+		result[i] = signal[(from+i)%len(signal)]
+	}
+	return result
+}
+
+func RunFastFFT(signal string, phases int, messageOffset int) string {
+	signalSlice := stringToIntSlice(signal)
+	signalSlice = extractSignal(signalSlice, messageOffset, len(signalSlice))
+
+	for p := 0; p < phases; p++ {
+		sum := 0
+		for i := len(signalSlice) - 1; i >= 0; i-- {
+			sum += signalSlice[i]
+			signalSlice[i] = utils.Abs(sum) % 10
+		}
+	}
+
+	return intSliceToString(signalSlice)
 }
 
 func RunFFT(signal string, phases int) string {
-	signalSize := len(signal)
+	signalSlice := stringToIntSlice(signal)
+	signalSize := len(signalSlice)
 	resultDigits := make([]int, signalSize)
 
 	for p := 0; p < phases; p++ {
@@ -34,20 +67,19 @@ func RunFFT(signal string, phases int) string {
 				case 0:
 					continue
 				case 1:
-					// Quick and dirty ASCII math
-					sum += (int(signal[j]) - 48) % 10
+					sum += signalSlice[j] % 10
 				case -1:
-					sum -= (int(signal[j]) - 48) % 10
+					sum -= signalSlice[j] % 10
 				}
 			}
 
 			resultDigits[i] = utils.Abs(sum % 10)
 		}
 
-		signal = intSliceToString(resultDigits)
+		signalSlice = resultDigits
 	}
 
-	return signal
+	return intSliceToString(signalSlice)
 }
 
 func getMultiplier(i, j int) int {
@@ -59,6 +91,17 @@ func getMultiplier(i, j int) int {
 	default:
 		return -1
 	}
+}
+
+func stringToIntSlice(string string) []int {
+	length := len(string)
+	slice := make([]int, length)
+
+	for i := 0; i < length; i++ {
+		slice[i] = int(string[i]) - 48 // Quick and dirty ASCII math
+	}
+
+	return slice
 }
 
 func intSliceToString(slice []int) string {
