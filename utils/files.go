@@ -6,13 +6,14 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func ReadFile(filename string) string {
 	buf, err := ioutil.ReadFile(filename)
 	check(err)
 
-	return string(buf)
+	return strings.TrimSpace(string(buf))
 }
 
 func ReadLines(filename string) []string {
