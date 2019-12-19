@@ -29,6 +29,13 @@ func (v *Vector2) Max(v2 Vector2) Vector2 {
 	}
 }
 
+func (v *Vector2) Multiply(i int) Vector2 {
+	return Vector2{
+		X: v.X * i,
+		Y: v.Y * i,
+	}
+}
+
 func (v *Vector3) Add(v2 Vector3) Vector3 {
 	return Vector3{
 		X: v.X + v2.X,
