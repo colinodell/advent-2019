@@ -36,6 +36,13 @@ func (v *Vector2) Multiply(i int) Vector2 {
 	}
 }
 
+func (v *Vector2) Copy() Vector2 {
+	return Vector2{
+		X: v.X,
+		Y: v.Y,
+	}
+}
+
 func (v *Vector3) Add(v2 Vector3) Vector3 {
 	return Vector3{
 		X: v.X + v2.X,
