@@ -16,12 +16,12 @@ const (
 )
 
 type Intcode struct {
-	program      []int
-	memory       []int
-	pos          int
-	input        chan int
-	output       chan int
-	relativeBase int
+	program                  []int
+	memory                   []int
+	pos                      int
+	input                    chan int
+	output                   chan int
+	relativeBase             int
 }
 
 func CreateIntcodeComputer(program ...int) *Intcode {
@@ -63,6 +63,7 @@ func (i *Intcode) Run(inputs ...int) []int {
 }
 
 func (i *Intcode) RunAsync(input chan int, done func()) chan int {
+
 	i.pos = 0
 	i.relativeBase = 0
 	i.memory = make([]int, max_memory)
