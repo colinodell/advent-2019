@@ -92,6 +92,34 @@ func (i *Intcode) RunAscii(program string) (int, string) {
 	}
 }
 
+func (i *Intcode) RunAsciiAsync(input chan string, done func()) chan string {
+	intInput := make(chan int)
+	stringOutput := make(chan string)
+	intOutput := i.RunAsync(intInput, done)
+
+	go func() {
+		var str strings.Builder
+
+		for {
+			select {
+			case str := <-input:
+				for _, char := range str {
+					intInput <- int(char)
+				}
+			case out := <-intOutput:
+				str.WriteRune(rune(out))
+				if out == 10 {
+					stringOutput <- str.String()
+					str.Reset()
+				}
+
+			}
+		}
+	}()
+
+	return stringOutput
+}
+
 func (i *Intcode) RunAsync(input chan int, done func()) chan int {
 
 	i.pos = 0
