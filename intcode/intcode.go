@@ -3,6 +3,7 @@ package intcode
 import (
 	"errors"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -60,6 +61,35 @@ func (i *Intcode) Run(inputs ...int) []int {
 	}
 
 	return outputs
+}
+
+func (i *Intcode) RunAscii(program string) (int, string) {
+	input := make(chan int)
+	done := make(chan bool)
+	output := i.RunAsync(input, func(){ done <- true })
+
+	go func() {
+		for _, char := range program {
+			input <- int(char)
+		}
+		close(input)
+	}()
+
+	var result int
+	var display strings.Builder
+
+	for {
+		select {
+		case x := <-output:
+			if x >= 128 {
+				result = x
+			} else {
+				display.WriteRune(rune(x))
+			}
+		case <-done:
+			return result, display.String()
+		}
+	}
 }
 
 func (i *Intcode) RunAsync(input chan int, done func()) chan int {
