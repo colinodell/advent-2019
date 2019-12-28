@@ -8,3 +8,4 @@ Past years:
 
  - [2018 - NodeJS](https://github.com/colinodell/advent-2018)
  - [2017 - PHP](https://github.com/colinodell/advent-2017)
+ - [2015 - Golang](https://github.com/colinodell/advent-2015)
